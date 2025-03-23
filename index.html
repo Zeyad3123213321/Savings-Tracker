@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Tracker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('05bb5809db095bce9a47b24b701663a9.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2rem; /* Smaller font size for mobile */
+            margin-bottom: 10px;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+            padding: 10px;
+            border-radius: 50px;
+        }
+        h2 {
+            font-size: 1.2rem; /* Smaller font size for mobile */
+            margin-bottom: 20px;
+            color: #34495e;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+            padding: 10px;
+            border-radius: 50px;
+        }
+        .quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #4caf50;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+            padding: 10px;
+            border-radius: 50px;
+        }
+        .progress-container {
+            width: 100%; /* Full width on mobile */
+            max-width: 600px;
+            background: rgba(224, 224, 224, 0.8); /* Semi-transparent background for better readability */
+            border-radius: 50px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            height: 20px; /* Smaller height for mobile */
+            background: linear-gradient(90deg, #4caf50, #81c784, #4caf50);
+            width: 0;
+            border-radius: 50   px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shine 2s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 columns on mobile */
+            gap: 8px; /* Smaller gap for mobile */
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .amount {
+            padding: 10px; /* Smaller padding for mobile */
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px; /* Smaller font size for mobile */
+            font-weight: bold;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .amount:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .selected {
+            background: linear-gradient(135deg, #4caf50, #81c784);
+            color: white;
+            border-color: #4caf50;
+        }
+        .selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #4caf50;
+            transform: translateY(-50%);
+        }
+        .input-container {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .input-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 200px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+        }
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px auto;
+            gap: 20px;
+            max-width: 600px;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        .metrics div {
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        /* Media query for larger screens */
+        @media (min-width: 600px) {
+            h1 {
+                font-size: 2.5rem; /* Larger font size for desktop */
+            }
+            h2 {
+                font-size: 1.5rem; /* Larger font size for desktop */
+            }
+            .grid {
+                grid-template-columns: repeat(10, 1fr); /* 10 columns for desktop */
+                gap: 10px; /* Larger gap for desktop */
+            }
+            .amount {
+                padding: 15px; /* Larger padding for desktop */
+                font-size: 16px; /* Larger font size for desktop */
+            }
+            .progress-bar {
+                height: 30px; /* Larger height for desktop */
+            }
+            .metrics {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Savings Tracker</h1>
+    <div class="quote">"Wealth seeks those who seek it."</div>
+    <h2>Total Saved: <span id="total">0</span> / 100,000 EGP</h2>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="input-container">
+        <input type="number" id="amount-input" placeholder="Enter amount" min="0" max="100000">
+    </div>
+    <div class="metrics">
+        <div>Weekly Savings: <span id="weekly">0</span> EGP</div>
+        <div>Monthly Savings: <span id="monthly">0</span> EGP</div>
+        <div>10% of Income: <span id="income">0</span> EGP</div>
+    </div>
+    <div class="grid" id="tracker"></div>
+
+    <script>
+        const tracker = document.getElementById("tracker");
+        const totalDisplay = document.getElementById("total");
+        const progressBar = document.getElementById("progress-bar");
+        const weeklyDisplay = document.getElementById("weekly");
+        const monthlyDisplay = document.getElementById("monthly");
+        const incomeDisplay = document.getElementById("income");
+        const amountInput = document.getElementById("amount-input");
+        let totalSaved = 0;
+        const goal = 100000; // Savings goal in EGP
+        const income = 3000; // Monthly income in EGP
+
+        // Load saved state from localStorage
+        let savedState = JSON.parse(localStorage.getItem("savedState")) || {};
+
+        // Function to update the total and progress bar
+        function updateTotal() {
+            totalDisplay.textContent = totalSaved;
+            let progress = (totalSaved / goal) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Update metrics
+            weeklyDisplay.textContent = Math.floor(totalSaved / 52); // Weekly savings
+            monthlyDisplay.textContent = Math.floor(totalSaved / 12); // Monthly savings
+            incomeDisplay.textContent = Math.floor(income * 0.1); // 10% of income
+        }
+
+        // Function to toggle the saved state of a box
+        function toggleSave(event) {
+            let box = event.target;
+            let amount = parseInt(amountInput.value);
+
+            // Validate input
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            if (amount > 100000) {
+                alert("The maximum amount you can enter is 100,000 EGP.");
+                return;
+            }
+
+            if (box.classList.contains("selected")) {
+                // If the box is already selected, reset it
+                totalSaved -= parseInt(box.textContent);
+                box.textContent = "0";
+                box.classList.remove("selected");
+            } else {
+                // If the box is not selected, apply the amount
+                totalSaved += amount;
+                box.textContent = amount;
+                box.classList.add("selected");
+            }
+            updateTotal();
+            savedState[box.textContent] = box.classList.contains("selected");
+            localStorage.setItem("savedState", JSON.stringify(savedState));
+        }
+
+        // Generate 30 boxes
+        for (let i = 1; i <= 30; i++) {
+            let div = document.createElement("div");
+            div.textContent = "0";
+            div.className = "amount";
+            div.addEventListener("click", toggleSave);
+            if (savedState[div.textContent]) {
+                div.classList.add("selected");
+                totalSaved += parseInt(div.textContent);
+            }
+            tracker.appendChild(div);
+        }
+
+        // Initialize the total and progress bar
+        updateTotal();
+    </script>
+</body>
+</html>
